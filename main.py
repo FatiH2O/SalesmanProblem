@@ -13,20 +13,22 @@ def go():
     print("Chiffre entré:", number)
     draw_villes(int(number)) # Appel de la fonction pour dessiner les points
     update_label(int(number)) # Mettre à jour l'étiquette avec le nombre de points
+    
     AlgoG= AlgorithmeGenetique(10)#creer une instance d'algo genetique avec la taille de population souhaitée
-    AlgoG.initialize_population(int(number))#initialiser la population
-    
-    """for indiv in AlgoG.population:
-         print("hello" ,indiv)"""
-    AlgoG.calculerFitness(coordonnee)
-    
     for indiv,coo in coordonnee.items():
          print(indiv,":", coo)
+    AlgoG.initialize_population(int(number))#initialiser la population
     
+    for indiv in AlgoG.population:
+         print("premièere pop" ,indiv)
+    children=AlgoG.SelectionRoulette(coordonnee)
+
+    AlgoG.elitist_replacement(children)
+    
+   
     
     
 
-    
 
 def reset():
     # Action à effectuer lorsque le bouton "Reset" est cliqué
