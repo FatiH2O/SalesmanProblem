@@ -1,5 +1,6 @@
 from utile import *  # Importe les fonctions utiles, peut-être des fonctions d'utilité pour le problème spécifique que tu traites
 import random  # Importe la fonction randint pour générer des nombres aléatoires
+import itertools
 
 class AlgorithmeGenetique:
     
@@ -7,16 +8,18 @@ class AlgorithmeGenetique:
         
         self.population =[]  # Liste des individus dans la population
         self.taillePopulation = taillePopulation  # Taille de la population
-        
-        
         self.fitness = {}
-        self.distanceCourante = float('inf')  # Initialisation de la distance courante avec une valeur infinie
-    
-        self.tauxDePanne = 0.1  # Taux de mutation initialisé à 0.1 (10%)
-    #algo de selectio par roulette
-    def calculerFitness(self, coordonnee):
+        self.tauxDeMutation=0.015
+        self.tauxElitisme= 0.3
+
+
+    #algo de selectioN par roulette
+    def SelectionRoulette(self, coordonnee):
+
     # Calcule la fitness de chaque individu dans la population
-        fitnessCumu = 0
+
+        fitnessCumu = {} #fitness cumuative de chaque individu
+        fitnessC=0 #somme fitness cumulative
         for individu in self.population:
                 
             distance = sommeDistances(individu,coordonnee)  # Calcule la somme des distances pour cet individu
@@ -24,19 +27,88 @@ class AlgorithmeGenetique:
             self.fitness[tuple(individu)]= fitness # Ajoute la fitness au dictionnaire des fitness pour chaque individu
             print("fitness de",individu,"est :", fitness)
 
+        #calcule la somme des fitnessCumulative pour chaque individu, derniere valeur est la somme de toutes les fitness de la pop
         for individu, fit in self.fitness.items():
-            fitnessCumu+= fit
-        print("fitnesscumu = ",fitnessCumu) 
-        return fitnessCumu
+            fitnessC+= fit
+            fitnessCumu[tuple(individu)]= fitnessC
+        print("fitnesscumu = ",fitnessCumu)
 
-             
-             
+        #normaliser la fitness
+        fitNormalized = normaliser(fitnessCumu,fitnessC)
+         
+        
+        #generer un nombre aléatoire entre 0 et 1 puis choisir l'indiv pour lequel la sommeCumu depasse Nbgenere
+        #répété jusqu'a avoir le nb d'individu demandé (on choisi la moitier de taillepopulation)
+        parentSelec=[]
+        for i in range(self.taillePopulation//2):
+            Nbgenere= random.uniform(0,1)
+            print("nb generé" ,i , " :",Nbgenere)
+            for individu, fitnorm in fitNormalized.items():
+            
+                if fitnorm > Nbgenere:
+                    parentSelec.append(individu)
+                    break
+        
+        print("les parents selectionnés sont: ", parentSelec)
+
+        # Liste pour stocker les enfants générés
+        children = []
+
+        # Vérifier si le nombre de parents est impair
+        if len(parentSelec) % 2 != 0:
+            # Si le nombre de parents est impair, ajoutez le dernier parent à la descendance sans croisement
+            children.append(list(parentSelec[-1]))
+            # Enlevez le dernier parent de la liste des parents pour éviter de l'inclure dans d'autres croisements
+            parentSelec = parentSelec[:-1]
+
+        # Parcourir chaque combinaison unique de parents et effectuer le croisement
+        for parent1, parent2 in itertools.combinations(parentSelec, 2):
+            child1, child2 = crossover(list(parent1), list(parent2))
+            children.append(list(child1))
+            children.append(list(child2))
+
+        # Afficher les enfants générés
+        for child in children:
+            print("its a child ", child)
+
+        children= self.mutation(children)
+        for child in children:
+            print("its a MUTCHILD ", child)
+        return children
     
-    def tombe_en_panne(self,villeA,villeB):
+    def elitist_replacement(self,children):
+
+        sortedpoplist=[]
+        # Triez les individus en fonction de leur fitness
+        sortedpoptuple= sorted(self.fitness.keys(), key=lambda x: self.fitness[x], reverse=True)
+
+        for indiv in sortedpoptuple:
+            sortedpoplist.append(list(indiv))
+
+        # Calcul du nombre d'individus à conserver en fonction du ratio d'élitisme
+        elitism_count = int((len(sortedpoplist)) * self.tauxElitisme)
     
-        for i in range(len(self.population[0])):
-            if(randint(0, 100) / 100 < self.tauxDePanne):  # Vérifie si la mutation se produit
-              return  Distance(villeA, villeB) + randint(1,50)
+        # Sélection des meilleurs individus à conserver dans la nouvelle population
+        new_population =  sortedpoplist[:elitism_count]
+    
+        # Ajout des enfants générés à la nouvelle population
+        new_population.extend(children)
+        self.population= new_population
+        print("nouvelle pop : ", self.population)
+    
+    
+
+
+    def mutation(self,children):
+    # Parcourir chaque ville dans l'enfant et appliquer la mutation avec une probabilité donnée par mutation_rate
+        for i in range(len(children)):
+
+         if random.random() < self.tauxDeMutation:
+            # Choisir une autre ville aléatoire et l'échanger avec la ville actuelle pour la mutation
+            j = random.randint(0, len(children) - 1)
+            children[i], children[j] = children[j], children[i]
+    
+        return children
 
 
     #prend le nombre de ville entrée dans l'interface et une taile de population
@@ -50,13 +122,4 @@ class AlgorithmeGenetique:
         
 
 
-    def selectionNaturelle(self):
-        # Effectue la sélection naturelle pour créer une nouvelle population
-        nouvellePopulation = []
-        for i in range(self.taillePopulation):
-            parent1 = selectionnerParent(self.population, self.fitness)  # Sélectionne le premier parent
-            parent2 = selectionnerParent(self.population, self.fitness)  # Sélectionne le deuxième parent
-        
-            self.muter(genes)  # Mutation des gènes
-            nouvellePopulation.append(genes)  # Ajoute les gènes à la nouvelle population
-        self.population = nouvellePopulation  # Met à jour la population avec la nouvelle population
+   
