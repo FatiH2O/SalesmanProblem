@@ -17,8 +17,8 @@ def sommeDistances(individu, coordonnee):
         ville_suivante = individu[(i + 1) % len(individu)]
         dist = Distance(coordonnee[ville_actuelle], coordonnee[ville_suivante])
         s += dist  # Ajoute la distance à la somme totale
-        print("somme distance est:", s)
-    print("he",s)
+        """print("somme distance est:", s)"""
+    """print("he",s)"""
     return s
 
 #diviser la fitnessCumu de chaque individu par la somme des fitnessCumu de a pop pour avoir des probabilité de selection pour chaque indiv        
@@ -28,8 +28,8 @@ def normaliser(fitnessCumu,fitnessC):
         if fitnessC!=0:
             fitNormaliser[tuple(individu)]= fit/ fitnessC
 
-    for indiv,fitnorm in fitNormaliser.items():
-        print("normaise : ",indiv,":", fitnorm)
+    """for indiv,fitnorm in fitNormaliser.items():
+        print("normaise : ",indiv,":", fitnorm)"""
     
     return fitNormaliser
 
