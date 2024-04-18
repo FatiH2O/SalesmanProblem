@@ -11,27 +11,41 @@ class AlgorithmeGenetique:
         self.fitness = {}
         self.tauxDeMutation=0.015
         self.tauxElitisme= 0.3
+        self.meilleurIndiv= None
+        self.meilleurfitness=0
 
 
+
+
+    
     #algo de selectioN par roulette
     def SelectionRoulette(self, coordonnee):
 
     # Calcule la fitness de chaque individu dans la population
-
+        self.fitness={}
         fitnessCumu = {} #fitness cumuative de chaque individu
         fitnessC=0 #somme fitness cumulative
+        
         for individu in self.population:
                 
             distance = sommeDistances(individu,coordonnee)  # Calcule la somme des distances pour cet individu
             fitness = 1 / (distance + 1)  # Calcule la fitness pour cet individu
             self.fitness[tuple(individu)]= fitness # Ajoute la fitness au dictionnaire des fitness pour chaque individu
-            print("fitness de",individu,"est :", fitness)
+            """print("fitness de",individu,"est :", fitness)"""
+
+        for individu,fit in self.fitness.items():
+
+            if fit>= self.meilleurfitness:
+                self.meilleurfitness = fit
+                self.meilleurIndiv = individu
+        print("la meilleur solution est; ", self.meilleurIndiv,"sa fitness est : ",self.meilleurfitness)
+    
 
         #calcule la somme des fitnessCumulative pour chaque individu, derniere valeur est la somme de toutes les fitness de la pop
         for individu, fit in self.fitness.items():
             fitnessC+= fit
             fitnessCumu[tuple(individu)]= fitnessC
-        print("fitnesscumu = ",fitnessCumu)
+        """print("fitnesscumu = ",fitnessCumu)"""
 
         #normaliser la fitness
         fitNormalized = normaliser(fitnessCumu,fitnessC)
@@ -42,14 +56,14 @@ class AlgorithmeGenetique:
         parentSelec=[]
         for i in range(self.taillePopulation//2):
             Nbgenere= random.uniform(0,1)
-            print("nb generé" ,i , " :",Nbgenere)
+            """print("nb generé" ,i , " :",Nbgenere)"""
             for individu, fitnorm in fitNormalized.items():
             
                 if fitnorm > Nbgenere:
                     parentSelec.append(individu)
                     break
         
-        print("les parents selectionnés sont: ", parentSelec)
+        """print("les parents selectionnés sont: ", parentSelec)"""
 
         # Liste pour stocker les enfants générés
         children = []
@@ -68,12 +82,12 @@ class AlgorithmeGenetique:
             children.append(list(child2))
 
         # Afficher les enfants générés
-        for child in children:
-            print("its a child ", child)
+        """for child in children:
+            print("its a child ", child)"""
 
         children= self.mutation(children)
-        for child in children:
-            print("its a MUTCHILD ", child)
+        """for child in children:
+            print("its a MUTCHILD ", child)"""
         return children
     
     def elitist_replacement(self,children):
@@ -92,9 +106,9 @@ class AlgorithmeGenetique:
         new_population =  sortedpoplist[:elitism_count]
     
         # Ajout des enfants générés à la nouvelle population
-        new_population.extend(children)
+        new_population.extend(children[:len(self.population) - elitism_count])
         self.population= new_population
-        print("nouvelle pop : ", self.population)
+        """print("nouvelle pop : ", self.population)"""
     
     
 
@@ -120,6 +134,8 @@ class AlgorithmeGenetique:
             self.population.append(individual)#ajoute l'individu à la population
     
         
+
+
 
 
    
