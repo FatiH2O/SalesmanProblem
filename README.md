@@ -6,8 +6,6 @@ Projet dans le cadre de l'UE d'Inteligence Artificielle. Implémentation en pyth
 ## Pour commencer
 
 Récuperer la branch main et l'ouvrir dans un  terminal.
-### Pré-requis
-
 
 ###  Démarrage
 
