@@ -5,28 +5,19 @@ Projet dans le cadre de l'UE d'Inteligence Artificielle. Implémentation en pyth
 
 ## Pour commencer
 
-Récuperer la branch main et l'ouvrir dans un  terminal, préférablement sur linux.
+Récuperer la branch main et l'ouvrir dans un  terminal.
 ### Pré-requis
 
-Requis pour le projet:
-- Environnement linux (possible sur wsl mais prend beaucoup de temps)
-- Python 3.8+
-- Pip
 
 ###  Démarrage
 
-Lancez le script bash en executant la commande ```./bash.sh``` avec les une des options suivante: 
-* mean pour les moyennes des mesures d'homophilie sur tous les graphes (```./bash.sh mean```)
-* measure pour les mesures d'accord d'homophilie (```./bash.sh measure```) 
+lancer le fichier main.py
 
-Donnez les droits d'execution si nécéssaire avec ```chmod +x bash.sh```
-
-Le script bash mettra en place un environnement virtuel et téléchargera toutes les dépendances requises, ceci peux prendre du temps lors du premier lancement. 
-
+Donnez les droits d'execution si nécéssaire avec ```chmod +x bash.sh``` si nécéssaire
 
 
 ## Auteurs
-
+* [Harish](https://github.com/Ibsjti)
 * [F. Ayed](https://github.com/FatiH2O)
 
 ## License
